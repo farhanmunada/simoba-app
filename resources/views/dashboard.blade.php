@@ -12,36 +12,7 @@
     </nav>
 </div>
 
-<div class="row">
-    <!-- Stats Cards -->
-    <div class="col-md-4">
-        <div class="stats-card">
-            <div class="d-flex justify-content-between align-items-center">
-                <div>
-                    <div class="stats-number">{{ $totalMobil }}</div>
-                    <div class="stats-label">Total Mobil</div>
-                </div>
-                <div>
-                    <i class="bi bi-car-front-fill" style="font-size: 2.5rem; opacity: 0.7;"></i>
-                </div>
-            </div>
-        </div>
-    </div>
-    
-    <div class="col-md-4">
-        <div class="stats-card" style="background: linear-gradient(135deg, #059669 0%, #047857 100%);">
-            <div class="d-flex justify-content-between align-items-center">
-                <div>
-                    <div class="stats-number">{{ $totalBidang }}</div>
-                    <div class="stats-label">Total Bidang</div>
-                </div>
-                <div>
-                    <i class="bi bi-building" style="font-size: 2.5rem; opacity: 0.7;"></i>
-                </div>
-            </div>
-        </div>
-    </div>
-    
+<div class="row">    
     <div class="col-md-4">
         <div class="stats-card" style="background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);">
             <div class="d-flex justify-content-between align-items-center">
@@ -55,6 +26,21 @@
             </div>
         </div>
     </div>
+
+    <div class="col-md-4">
+        <div class="stats-card" style="background: linear-gradient(135deg, #2563eb 0%, #1e3a8a 100%);">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <div class="stats-number">{{ $totalPeminjaman }}</div>
+                    <div class="stats-label">Total Semua Peminjaman</div>
+                </div>
+                <div>
+                    <i class="bi bi-clipboard-data" style="font-size: 2.5rem; opacity: 0.7;"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </div>
 
 <div class="row mt-4">

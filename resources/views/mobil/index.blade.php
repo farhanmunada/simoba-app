@@ -65,13 +65,13 @@
                             <td>
                                 <div class="btn-group" role="group">
                                     <a href="{{ route('mobil.edit', $item) }}" 
-                                       class="btn btn-outline-warning btn-sm">
+                                        class="btn btn-outline-warning btn-sm">
                                         <i class="bi bi-pencil"></i>
                                     </a>
                                     <form action="{{ route('mobil.destroy', $item) }}" 
-                                          method="POST" 
-                                          style="display: inline;"
-                                          onsubmit="return confirm('Apakah Anda yakin ingin menghapus mobil ini?')">
+                                            method="POST" 
+                                            style="display: inline;"
+                                            onsubmit="return confirm('Apakah Anda yakin ingin menghapus mobil ini?')">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" class="btn btn-outline-danger btn-sm">

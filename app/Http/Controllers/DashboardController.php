@@ -15,7 +15,8 @@ class DashboardController extends Controller
         $totalMobil = Mobil::count();
         $totalBidang = Bidang::count();
         $peminjamanHariIni = Peminjaman::whereDate('waktu_peminjaman', Carbon::today())->count();
+        $totalPeminjaman = Peminjaman::count();
 
-        return view('dashboard', compact('totalMobil', 'totalBidang', 'peminjamanHariIni'));
+        return view('dashboard', compact('totalMobil', 'totalBidang', 'peminjamanHariIni', 'totalPeminjaman'));
     }
 }

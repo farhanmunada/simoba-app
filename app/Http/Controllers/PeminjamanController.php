@@ -10,15 +10,34 @@ use Carbon\Carbon;
 
 class PeminjamanController extends Controller
 {
-    public function index()
-    {
-        $peminjaman = Peminjaman::with(['bidang', 'mobil'])->orderBy('waktu_peminjaman', 'desc')->get();
-        $peminjamanHariIni = Peminjaman::with(['bidang', 'mobil'])
-            ->whereDate('waktu_peminjaman', Carbon::today())
+    public function index(){
+        $today = Carbon::today();
+
+        $peminjaman = Peminjaman::with(['bidang', 'mobil'])
             ->orderBy('waktu_peminjaman', 'desc')
             ->get();
-        
-        return view('peminjaman.index', compact('peminjaman', 'peminjamanHariIni'));
+
+        $peminjamanHariIni = Peminjaman::with(['bidang', 'mobil'])
+            ->whereDate('waktu_peminjaman', $today)
+            ->orderBy('waktu_peminjaman', 'asc')
+            ->get();
+
+        $peminjamanMendatang = Peminjaman::with(['bidang', 'mobil'])
+            ->whereDate('waktu_peminjaman', '>', $today)
+            ->orderBy('waktu_peminjaman', 'asc')
+            ->get();
+
+        $riwayatPeminjaman = Peminjaman::with(['bidang', 'mobil'])
+            ->whereDate('waktu_peminjaman', '<', $today)
+            ->orderBy('waktu_peminjaman', 'desc')
+            ->get();
+
+        return view('peminjaman.index', compact(
+            'peminjaman',
+            'peminjamanHariIni',
+            'peminjamanMendatang',
+            'riwayatPeminjaman'
+        ));
     }
 
     public function create()
