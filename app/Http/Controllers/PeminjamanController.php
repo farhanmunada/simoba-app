@@ -10,7 +10,8 @@ use Carbon\Carbon;
 
 class PeminjamanController extends Controller
 {
-    public function index(){
+    public function index()
+    {
         $today = Carbon::today();
 
         $peminjaman = Peminjaman::with(['bidang', 'mobil'])
@@ -40,11 +41,18 @@ class PeminjamanController extends Controller
         ));
     }
 
-    public function create()
+    public function create(Request $request)
     {
-        $bidang = Bidang::all();
+        $tanggal = $request->input('waktu_peminjaman', Carbon::today()->toDateString());
+
+        $mobilDipinjamHariIni = Peminjaman::whereDate('waktu_peminjaman', $tanggal)
+            ->pluck('mobil_id')
+            ->toArray();
+
         $mobil = Mobil::all();
-        return view('peminjaman.create', compact('bidang', 'mobil'));
+        $bidang = Bidang::all();
+
+        return view('peminjaman.create', compact('mobil', 'bidang', 'mobilDipinjamHariIni', 'tanggal'));
     }
 
     public function store(Request $request)

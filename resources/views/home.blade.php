@@ -7,70 +7,77 @@
         .fade-up {
             opacity: 0;
             transform: translateY(20px);
-            animation: fadeUp 0.5s ease-out forwards;
-        }
-
-        @keyframes fadeUp {
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            transition: opacity 0.5s ease-out, transform 0.5s ease-out;
         }
 
         .jadwal-item {
             display: none;
+            padding-bottom: 1rem;
         }
 
         .jadwal-item.active {
             display: block;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .jadwal-item.active~.jadwal-item.active {
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid #dee2e6;
         }
     </style>
 
     <div class="container py-5">
-
-            <div class="row">
-                <!-- Hero Card -->
-                <div class="col-md-6 mb-4">
-                    <div class="card border-0 shadow rounded-4 h-100 d-flex justify-content-center align-items-center bg-light text-center">
-                        <div class="card-body">
-                            <h1 class="text-primary fw-bold mb-3">Peminjaman Mobil</h1>
-                            <h4 class="text-secondary fw-semibold">Bappeda Kabupaten</h4>
-                            <p class="text-muted">Layanan peminjaman kendaraan operasional antar bidang.</p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Jadwal Hari Ini -->
-                <div class="col-md-6 mb-4">
-                    <div class="card border-0 shadow rounded-4 h-100">
-                        <div class="card-header bg-primary text-white fw-bold rounded-top-4">
-                            <i class="fa-solid fa-calendar-day me-2"></i>Jadwal Hari Ini
-                        </div>
-                        <div class="card-body">
-                            @if($jadwalHariIni->isEmpty())
-                                <p class="text-muted m-0">Tidak ada jadwal hari ini.</p>
-                            @else
-                                <div id="jadwalHariIniContainer">
-                                    @foreach($jadwalHariIni as $index => $item)
-                                        <div class="jadwal-item fade-up {{ $index === 0 ? 'active' : '' }}">
-                                            <h5 class="fw-bold text-primary mb-1">
-                                                <i class="fa-solid fa-car me-1"></i>
-                                                {{ $item->mobil->nama_mobil ?? 'Tidak tersedia' }}
-                                            </h5>
-                                            <div class="text-secondary text-sm">
-                                                <div><i class="fa-regular fa-clock me-1"></i> <strong>Waktu:</strong> {{ \Carbon\Carbon::parse($item->waktu_peminjaman)->format('d-m-Y H:i') }}</div>
-                                                <div><i class="fa-solid fa-calendar-days me-1"></i> <strong>Acara:</strong> {{ $item->nama_acara }}</div>
-                                                <div><i class="fa-solid fa-location-dot me-1"></i> <strong>Tempat:</strong> {{ $item->tempat_kegiatan }}</div>
-                                                <div><i class="fa-solid fa-user me-1"></i> <strong>PJ:</strong> {{ $item->penanggung_jawab }}</div>
-                                            </div>
-                                        </div>
-                                    @endforeach
-                                </div>
-                            @endif
-                        </div>
+        <div class="row">
+            <!-- Hero Card -->
+            <div class="col-md-6 mb-4">
+                <div
+                    class="card border-0 shadow rounded-4 h-100 d-flex justify-content-center align-items-center bg-light text-center">
+                    <div class="card-body">
+                        <h1 class="text-primary fw-bold mb-3">Peminjaman Mobil</h1>
+                        <h4 class="text-secondary fw-semibold">Bappeda Kabupaten</h4>
+                        <p class="text-muted">Layanan peminjaman kendaraan operasional antar bidang.</p>
                     </div>
                 </div>
             </div>
+
+            <!-- Jadwal Hari Ini -->
+            <div class="col-md-6 mb-4">
+                <div class="card border-0 shadow rounded-4 h-100">
+                    <div class="card-header bg-primary text-white fw-bold rounded-top-4">
+                        <i class="fa-solid fa-calendar-day me-2"></i>Jadwal Hari Ini
+                    </div>
+                    <div class="card-body">
+                        @if ($jadwalHariIni->isEmpty())
+                            <p class="text-muted m-0">Tidak ada jadwal hari ini.</p>
+                        @else
+                            <div id="jadwalHariIniContainer">
+                                @foreach ($jadwalHariIni as $item)
+                                    <div class="jadwal-item fade-up">
+                                        <h5 class="fw-bold text-primary mb-2">
+                                            <i class="fa-solid fa-car me-1"></i>
+                                            {{ $item->mobil->nama_mobil ?? 'Tidak tersedia' }}
+                                        </h5>
+                                        <div class="text-secondary text-sm">
+                                            <div><i class="fa-regular fa-clock me-1"></i> <strong>Waktu:</strong>
+                                                {{ \Carbon\Carbon::parse($item->waktu_peminjaman)->format('d-m-Y H:i') }}
+                                            </div>
+                                            <div><i class="fa-solid fa-calendar-days me-1"></i> <strong>Acara:</strong>
+                                                {{ $item->nama_acara }}</div>
+                                            <div><i class="fa-solid fa-location-dot me-1"></i> <strong>Tempat:</strong>
+                                                {{ $item->tempat_kegiatan }}</div>
+                                            <div><i class="fa-solid fa-user me-1"></i> <strong>PJ:</strong>
+                                                {{ $item->penanggung_jawab }}</div>
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div>
+                        @endif
+                    </div>
+                </div>
+            </div>
+        </div>
 
         <div class="row">
             <!-- Jadwal Mendatang -->
@@ -80,18 +87,25 @@
                         <i class="fa-solid fa-calendar-plus me-2"></i>Jadwal Mendatang
                     </div>
                     <div class="card-body">
-                        @if($jadwalMendatang->isEmpty())
+                        @if ($jadwalMendatang->isEmpty())
                             <p class="text-muted m-0">Tidak ada jadwal mendatang.</p>
                         @else
                             <div id="jadwalMendatangContainer">
-                                @foreach($jadwalMendatang as $index => $item)
-                                    <div class="jadwal-item fade-up {{ $index === 0 ? 'active' : '' }}">
-                                        <h5 class="fw-bold text-primary">{{ $item->mobil->nama_mobil ?? 'Tidak tersedia' }}</h5>
-                                        <div class="text-secondary text-base">
-                                            <div><i class="fa-regular fa-clock me-1"></i> <strong>Waktu:</strong> {{ \Carbon\Carbon::parse($item->waktu_peminjaman)->format('d-m-Y H:i') }}</div>
-                                            <div><i class="fa-solid fa-calendar-days me-1"></i> <strong>Acara:</strong> {{ $item->nama_acara }}</div>
-                                            <div><i class="fa-solid fa-location-dot me-1"></i> <strong>Tempat:</strong> {{ $item->tempat_kegiatan }}</div>
-                                            <div><i class="fa-solid fa-user me-1"></i> <strong>PJ:</strong> {{ $item->penanggung_jawab }}</div>
+                                @foreach ($jadwalMendatang as $item)
+                                    <div class="jadwal-item fade-up">
+                                        <h5 class="fw-bold text-primary mb-2">
+                                            {{ $item->mobil->nama_mobil ?? 'Tidak tersedia' }}
+                                        </h5>
+                                        <div class="text-secondary text-sm">
+                                            <div><i class="fa-regular fa-clock me-1"></i> <strong>Waktu:</strong>
+                                                {{ \Carbon\Carbon::parse($item->waktu_peminjaman)->format('d-m-Y H:i') }}
+                                            </div>
+                                            <div><i class="fa-solid fa-calendar-days me-1"></i> <strong>Acara:</strong>
+                                                {{ $item->nama_acara }}</div>
+                                            <div><i class="fa-solid fa-location-dot me-1"></i> <strong>Tempat:</strong>
+                                                {{ $item->tempat_kegiatan }}</div>
+                                            <div><i class="fa-solid fa-user me-1"></i> <strong>PJ:</strong>
+                                                {{ $item->penanggung_jawab }}</div>
                                         </div>
                                     </div>
                                 @endforeach
@@ -108,18 +122,25 @@
                         <i class="fa-solid fa-history me-2"></i>Riwayat Peminjaman
                     </div>
                     <div class="card-body">
-                        @if($riwayatPeminjaman->isEmpty())
+                        @if ($riwayatPeminjaman->isEmpty())
                             <p class="text-muted m-0">Belum ada riwayat peminjaman.</p>
                         @else
                             <div id="riwayatPeminjamanContainer">
-                                @foreach($riwayatPeminjaman as $index => $item)
-                                    <div class="jadwal-item fade-up {{ $index === 0 ? 'active' : '' }}">
-                                        <h5 class="fw-bold text-primary">{{ $item->mobil->nama_mobil ?? 'Tidak tersedia' }}</h5>
-                                        <div class="text-muted small">
-                                            <div><i class="fa-regular fa-clock me-1"></i> <strong>Waktu:</strong> {{ \Carbon\Carbon::parse($item->waktu_peminjaman)->format('d-m-Y H:i') }}</div>
-                                            <div><i class="fa-solid fa-calendar-days me-1"></i> <strong>Acara:</strong> {{ $item->nama_acara }}</div>
-                                            <div><i class="fa-solid fa-location-dot me-1"></i> <strong>Tempat:</strong> {{ $item->tempat_kegiatan }}</div>
-                                            <div><i class="fa-solid fa-user me-1"></i> <strong>PJ:</strong> {{ $item->penanggung_jawab }}</div>
+                                @foreach ($riwayatPeminjaman as $item)
+                                    <div class="jadwal-item fade-up">
+                                        <h5 class="fw-bold text-primary mb-2">
+                                            {{ $item->mobil->nama_mobil ?? 'Tidak tersedia' }}
+                                        </h5>
+                                        <div class="text-muted text-sm">
+                                            <div><i class="fa-regular fa-clock me-1"></i> <strong>Waktu:</strong>
+                                                {{ \Carbon\Carbon::parse($item->waktu_peminjaman)->format('d-m-Y H:i') }}
+                                            </div>
+                                            <div><i class="fa-solid fa-calendar-days me-1"></i> <strong>Acara:</strong>
+                                                {{ $item->nama_acara }}</div>
+                                            <div><i class="fa-solid fa-location-dot me-1"></i> <strong>Tempat:</strong>
+                                                {{ $item->tempat_kegiatan }}</div>
+                                            <div><i class="fa-solid fa-user me-1"></i> <strong>PJ:</strong>
+                                                {{ $item->penanggung_jawab }}</div>
                                         </div>
                                     </div>
                                 @endforeach
@@ -129,30 +150,37 @@
                 </div>
             </div>
         </div>
-
-
     </div>
 
-    {{-- Script Rotasi Otomatis --}}
     <script>
-        function rotateItems(containerId, interval = 5000) {
+        function rotateItems(containerId, itemsPerPage = 3, interval = 5000) {
             const container = document.getElementById(containerId);
             if (!container) return;
 
             const items = container.querySelectorAll('.jadwal-item');
-            let current = 0;
+            let currentIndex = 0;
 
-            setInterval(() => {
-                items[current].classList.remove('active');
-                current = (current + 1) % items.length;
-                items[current].classList.add('active');
-            }, interval);
+            function showItems() {
+                items.forEach(item => item.classList.remove('active'));
+
+                for (let i = 0; i < itemsPerPage; i++) {
+                    const index = (currentIndex + i) % items.length;
+                    items[index].classList.add('active');
+                }
+
+                currentIndex = (currentIndex + itemsPerPage) % items.length;
+            }
+
+            if (items.length > 0) {
+                showItems();
+                setInterval(showItems, interval);
+            }
         }
 
-        document.addEventListener("DOMContentLoaded", function () {
-            rotateItems("jadwalHariIniContainer");
-            rotateItems("jadwalMendatangContainer");
-            rotateItems("riwayatPeminjamanContainer");
+        document.addEventListener("DOMContentLoaded", function() {
+            rotateItems("jadwalHariIniContainer", 3);
+            rotateItems("jadwalMendatangContainer", 3);
+            rotateItems("riwayatPeminjamanContainer", 3);
         });
     </script>
 @endsection
