@@ -32,56 +32,57 @@
 <!-- Peminjaman Hari Ini -->
 <div class="card mb-4">
     <div class="card-header bg-primary text-white">
-        <h5 class="mb-0">
-            <i class="bi bi-calendar-day me-2"></i>
-            Peminjaman Hari Ini ({{ date('d F Y') }})
-        </h5>
+        Peminjaman Hari Ini
     </div>
-    <div class="card-body">
-        @if($peminjamanHariIni->count() > 0)
-            <div class="table-responsive">
-                <table class="table table-striped table-hover mb-0">
-                    <thead>
-                        <tr>
-                            <th width="5%">No</th>
-                            <th width="15%">Bidang</th>
-                            <th width="15%">Mobil</th>
-                            <th width="15%">Waktu</th>
-                            <th width="20%">Tempat Kegiatan</th>
-                            <th width="15%">Nama Acara</th>
-                            <th width="15%">Penanggung Jawab</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach($peminjamanHariIni as $index => $item)
-                        <tr>
-                            <td>{{ $index + 1 }}</td>
-                            <td>
-                                <span class="badge bg-info">{{ $item->bidang->nama_bidang }}</span>
-                            </td>
-                            <td>
-                                <strong>{{ $item->mobil->nama_mobil }}</strong><br>
-                                <small class="text-muted">{{ $item->mobil->nomor_polisi }}</small>
-                            </td>
-                            <td>
-                                <small>{{ $item->waktu_peminjaman->format('H:i') }}</small>
-                            </td>
-                            <td>{{ $item->tempat_kegiatan }}</td>
-                            <td>{{ $item->nama_acara }}</td>
-                            <td>{{ $item->penanggung_jawab }}</td>
-                        </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-            </div>
-        @else
-            <div class="text-center py-3">
-                <i class="bi bi-calendar-x text-muted" style="font-size: 2rem;"></i>
-                <p class="text-muted mt-2 mb-0">Tidak ada peminjaman hari ini</p>
-            </div>
-        @endif
+    <div class="card-body table-responsive">
+        <table class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th width="5%">No</th>
+                    <th width="15%">Bidang</th>
+                    <th width="15%">Mobil</th>
+                    <th width="15%">Waktu</th>
+                    <th width="20%">Tempat Kegiatan</th>
+                    <th width="15%">Nama Acara</th>
+                    <th width="15%">Penanggung Jawab</th>
+                    <th width="10%">Aksi</th> <!-- ✅ Tambahan kolom Aksi -->
+                </tr>
+            </thead>
+            <tbody>
+                @forelse($peminjamanHariIni as $index => $item)
+                    <tr>
+                        <td>{{ $index + 1 }}</td>
+                        <td>{{ $item->bidang->nama_bidang }}</td>
+                        <td>{{ $item->mobil->nama_mobil }}</td>
+                        <td>{{ \Carbon\Carbon::parse($item->waktu_peminjaman)->translatedFormat('d F Y H:i') }}</td>
+                        <td>{{ $item->tempat_kegiatan }}</td>
+                        <td>{{ $item->nama_acara }}</td>
+                        <td>{{ $item->penanggung_jawab }}</td>
+                        <td> <!-- ✅ Aksi -->
+                            <div class="btn-group" role="group">
+                                <a href="{{ route('peminjaman.edit', $item) }}" class="btn btn-outline-warning btn-sm">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                                <form action="{{ route('peminjaman.destroy', $item) }}" method="POST" style="display: inline;" onsubmit="return confirm('Apakah Anda yakin ingin menghapus data peminjaman ini?')">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-outline-danger btn-sm">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                @empty
+                    <tr>
+                        <td colspan="8" class="text-center">Tidak ada peminjaman hari ini.</td> <!-- ❗️Update colspan dari 7 ke 8 -->
+                    </tr>
+                @endforelse
+            </tbody>
+        </table>
     </div>
 </div>
+
 
 <!-- Peminjaman Mendatang -->
 <div class="card mb-4">
