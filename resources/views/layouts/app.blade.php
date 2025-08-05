@@ -19,6 +19,63 @@
     <!-- Favicon -->
     <link rel="icon" href="{{ asset('Simoba.ico') }}" type="image/x-icon">
     <style>
+        /* Collapse Sidebar */
+        .sidebar.collapsed {
+            width: 60px;
+        }
+
+        .sidebar.collapsed .sidebar-nav a .bi,
+        .sidebar.collapsed .nav-link i {
+            margin-right: 0;
+            text-align: center;
+            width: 100%;
+        }
+
+        .sidebar.collapsed .sidebar-nav a,
+        .sidebar.collapsed .nav-link {
+            justify-content: center;
+        }
+
+        .sidebar.collapsed .sidebar-nav a span,
+        .sidebar.collapsed .nav-link span,
+        .sidebar.collapsed .sidebar-brand small,
+        .sidebar.collapsed .sidebar-brand h4 {
+            display: none;
+        }
+
+        /* Hover to expand */
+        .sidebar.collapsed:hover {
+            width: var(--sidebar-width);
+        }
+
+        .sidebar.collapsed:hover .sidebar-nav a,
+        .sidebar.collapsed:hover .nav-link {
+            justify-content: flex-start;
+        }
+
+        .sidebar.collapsed:hover .sidebar-nav a span,
+        .sidebar.collapsed:hover .nav-link span,
+        .sidebar.collapsed:hover .sidebar-brand small,
+        .sidebar.collapsed:hover .sidebar-brand h4 {
+            display: inline;
+        }
+
+        /* Responsive - Mobile */
+        @media (max-width: 991.98px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.mobile-active {
+                transform: translateX(0);
+                z-index: 1050;
+            }
+
+            .main-content {
+                transition: margin-left 0.3s ease;
+            }
+        }
+
         :root {
             --primary-color: #2563eb;
             --primary-dark: #1d4ed8;
@@ -219,6 +276,27 @@
                 padding: 1rem;
             }
         }
+
+        @media (max-width: 991.98px) {
+            .main-content {
+                margin-left: 0 !important;
+            }
+
+            .sidebar {
+                width: var(--sidebar-width);
+            }
+        }
+
+        .sidebar.mobile-active::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: var(--sidebar-width);
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.3);
+            z-index: -1;
+        }
     </style>
 </head>
 
@@ -231,25 +309,26 @@
         </div>
 
         <div class="sidebar-nav">
+
             <a href="{{ route('dashboard') }}" class="nav-link {{ request()->routeIs('dashboard') ? 'active' : '' }}">
                 <i class="bi bi-speedometer2"></i>
-                Dashboard
+                <span>Dashboard</span>
             </a>
 
             <a href="{{ route('peminjaman.index') }}"
                 class="nav-link {{ request()->routeIs('peminjaman.*') ? 'active' : '' }}">
                 <i class="bi bi-calendar-check"></i>
-                Peminjaman Mobil
+                <span>Peminjaman Mobil</span>
             </a>
 
             <a href="{{ route('mobil.index') }}" class="nav-link {{ request()->routeIs('mobil.*') ? 'active' : '' }}">
                 <i class="bi bi-car-front"></i>
-                Mobil
+                <span>Mobil</span>
             </a>
 
             <a href="{{ route('bidang.index') }}" class="nav-link {{ request()->routeIs('bidang.*') ? 'active' : '' }}">
                 <i class="bi bi-building"></i>
-                Bidang
+                <span>Bidang</span>
             </a>
 
             <hr style="border-color: rgba(255, 255, 255, 0.2); margin: 1rem 1.5rem;">
@@ -267,6 +346,12 @@
 
     <!-- Main Content -->
     <main class="main-content">
+        <!-- Tombol Hamburger (hanya muncul di mobile) -->
+        <div class="d-lg-none mb-3">
+            <button id="toggleSidebarBtn" class="btn btn-outline-primary">
+                <i class="bi bi-list"></i>
+            </button>
+        </div>
         @yield('content')
     </main>
 
@@ -278,6 +363,52 @@
 
     <!-- Bootstrap 5 JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    @once
+        @push('scripts')
+            <script>
+                document.addEventListener('DOMContentLoaded', function() {
+                    const sidebar = document.querySelector('.sidebar');
+                    const toggleBtn = document.getElementById('toggleSidebarBtn');
+
+                    // Toggle sidebar saat tombol diklik
+                    toggleBtn.addEventListener('click', () => {
+                        if (window.innerWidth >= 992) {
+                            sidebar.classList.toggle('collapsed');
+                        } else {
+                            sidebar.classList.toggle('mobile-active');
+                        }
+                    });
+
+                    // Penyesuaian saat resize
+                    function handleResize() {
+                        if (window.innerWidth >= 992) {
+                            sidebar.classList.remove('mobile-active');
+                            // Jangan langsung collapse di desktop, biar bisa ditoggle manual
+                            // Optional: sidebar.classList.remove('collapsed');
+                        } else {
+                            sidebar.classList.remove('collapsed'); // jangan collapse di mobile
+                        }
+                    }
+
+                    handleResize(); // Jalankan saat awal
+                    window.addEventListener('resize', handleResize);
+
+                    // Klik di luar sidebar untuk tutup (khusus mobile)
+                    document.addEventListener('click', function(e) {
+                        if (
+                            window.innerWidth < 992 &&
+                            !sidebar.contains(e.target) &&
+                            !toggleBtn.contains(e.target)
+                        ) {
+                            sidebar.classList.remove('mobile-active');
+                        }
+                    });
+                });
+            </script>
+        @endpush
+    @endonce
+
 
     @stack('scripts')
 </body>

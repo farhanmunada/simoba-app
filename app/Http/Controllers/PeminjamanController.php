@@ -66,6 +66,18 @@ class PeminjamanController extends Controller
             'penanggung_jawab' => 'required|string|max:255',
         ]);
 
+        // Cek apakah peminjaman dengan mobil dan tanggal ini sudah ada
+        $duplikat = Peminjaman::where('mobil_id', $request->mobil_id)
+            ->whereDate('waktu_peminjaman', $request->waktu_peminjaman)
+            ->exists();
+
+        if ($duplikat) {
+            return redirect()->back()
+                ->withInput()
+                ->withErrors(['mobil_id' => 'Mobil ini sudah dipinjam pada tanggal tersebut.']);
+        }
+
+        // Simpan jika tidak duplikat
         Peminjaman::create($request->all());
 
         return redirect()->route('peminjaman.index')->with('success', 'Data peminjaman berhasil ditambahkan!');

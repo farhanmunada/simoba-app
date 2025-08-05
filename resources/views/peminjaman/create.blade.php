@@ -150,7 +150,7 @@
 
                         {{-- Submit Buttons --}}
                         <div class="d-flex gap-2">
-                            <button type="submit" class="btn btn-primary">
+                            <button type="submit" class="btn btn-primary" id="submitBtn">
                                 <i class="bi bi-save me-2"></i>
                                 Simpan
                             </button>
@@ -225,3 +225,39 @@
         </div>
     </div>
 @endsection
+
+@if (session('success'))
+    <script>
+        Swal.fire({
+            icon: 'success',
+            title: 'Berhasil!',
+            text: '{{ session('success') }}',
+            showConfirmButton: false,
+            timer: 2000
+        });
+    </script>
+@endif
+
+@push('scripts')
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.querySelector('form');
+            const submitBtn = document.getElementById('submitBtn');
+
+            form.addEventListener('submit', function(e) {
+                e.preventDefault(); // Cegah submit langsung
+
+                // Tampilkan konfirmasi
+                if (confirm("Apakah Anda yakin ingin menyimpan data peminjaman ini?")) {
+                    // Ubah tombol jadi loading
+                    submitBtn.disabled = true;
+                    submitBtn.innerHTML = `
+                        <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                        Menyimpan...`;
+
+                    form.submit(); // Submit form setelah konfirmasi
+                }
+            });
+        });
+    </script>
+@endpush
