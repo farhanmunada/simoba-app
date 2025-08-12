@@ -1,18 +1,33 @@
 <?php
+// database/seeders/MobilSeeder.php
+
+namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use App\Models\Bidang;
+use Illuminate\Support\Facades\DB;
 
-class BidangSeeder extends Seeder
+class MobilSeeder extends Seeder
 {
-    public function run()
+    public function run(): void
     {
-        $bidangs = ['Sekretariat', 'Litbang', 'PEIPD', 'ESDI', 'PPMP'];
+        DB::table('mobil')->insert([
+            [
+                'nama_mobil' => 'Toyota Avanza',
+                'nomor_polisi' => 'B 1234 ABC',
+                'keterangan' => 'Mobil dinas untuk kegiatan operasional',
+            ],
+            [
+                'nama_mobil' => 'Honda Civic',
+                'nomor_polisi' => 'B 5678 DEF',
+                'keterangan' => 'Mobil dinas untuk pejabat',
+            ],
+            [
+                'nama_mobil' => 'Daihatsu Xenia',
+                'nomor_polisi' => 'B 9012 GHI',
+                'keterangan' => 'Mobil dinas untuk perjalanan dinas',
+            ],
+        ]);
 
-        foreach ($bidangs as $bidang) {
-            Bidang::create([
-                'nama_bidang' => $bidang
-            ]);
-        }
+        $this->command->info('Data mobil berhasil dimasukkan.');
     }
 }

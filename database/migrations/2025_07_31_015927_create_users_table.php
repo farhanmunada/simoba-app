@@ -12,10 +12,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('users', function (Blueprint $table) {
-            $table->id();
-            $table->string('username')->unique();
-            $table->string('password'); // Plain text password
-            $table->timestamps();
+            $table->id(); // ID auto increment
+            $table->string('username')->unique(); // Username unik
+            $table->string('password'); // Password bisa plain atau hashed
         });
     }
 

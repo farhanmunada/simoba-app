@@ -1,11 +1,13 @@
 <?php
 
+namespace Database\Seeders;
+
 use Illuminate\Database\Seeder;
 use App\Models\Bidang;
 
 class BidangSeeder extends Seeder
 {
-    public function run()
+    public function run(): void
     {
         $bidangs = ['Sekretariat', 'Litbang', 'PEIPD', 'ESDI', 'PPMP'];
 
