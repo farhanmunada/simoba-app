@@ -34,9 +34,9 @@
             <div class="col-md-6 mb-4">
                 <div
                     class="card border-0 shadow rounded-4 h-100 d-flex justify-content-center align-items-center bg-light text-center">
-                    <div class="card-body">
-                        <h1 class="text-primary fw-bold mb-3">Peminjaman Mobil</h1>
-                        <h4 class="text-secondary fw-semibold">Bappeda Kabupaten</h4>
+                    <div class="card-body text-center">
+                        <img src="/simoba.png" alt="Logo SIMOBA" style="height: 50px; margin-bottom: 1rem;">
+                        <h4 class="text-secondary fw-semibold">Sistem Informasi Mobil Bappeda Kabupaten</h4>
                         <p class="text-muted">Layanan peminjaman kendaraan operasional antar bidang.</p>
                     </div>
                 </div>

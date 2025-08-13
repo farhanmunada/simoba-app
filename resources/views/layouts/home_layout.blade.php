@@ -15,7 +15,7 @@
     <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
         <div class="container">
             <a class="navbar-brand fw-bold text-primary" href="/">
-                <i class="fa-solid fa-car-side me-2"></i> SIMOBA
+                <img src="simoba.png" alt="Logo SIMOBA" class="me-2" style="height: 24px;">
             </a>
             <div class="ms-auto">
                 <a href="/login" class="btn btn-outline-primary">

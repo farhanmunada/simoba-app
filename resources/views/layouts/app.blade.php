@@ -303,9 +303,8 @@
 <body>
     <!-- Sidebar -->
     <nav class="sidebar">
-        <div class="sidebar-brand">
-            <h4>SIMOBA</h4>
-            <small>Sistem Informasi Peminjaman Mobil Bappeda</small>
+        <div class="sidebar-brand text-center p-3">
+            <img src="/simobaputih.png" alt="Logo SIMOBA" style="height: 40px; margin-bottom: 0.5rem;">
         </div>
 
         <div class="sidebar-nav">
