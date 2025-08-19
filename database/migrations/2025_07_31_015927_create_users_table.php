@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id(); // ID auto increment
             $table->string('username')->unique(); // Username unik
             $table->string('password'); // Password bisa plain atau hashed
+            $table->timestamps();
         });
     }
 
