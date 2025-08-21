@@ -330,6 +330,12 @@
                 <span>Bidang</span>
             </a>
 
+            <a href="{{ route('ganti-oli.index') }}"
+                class="nav-link {{ request()->routeIs('ganti-oli.*') ? 'active' : '' }}">
+                <i class="bi bi-tools"></i>
+                <span>Ganti Oli</span>
+            </a>
+
             <hr style="border-color: rgba(255, 255, 255, 0.2); margin: 1rem 1.5rem;">
 
             <form action="{{ route('logout') }}" method="POST" style="display: inline;">

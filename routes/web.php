@@ -1,4 +1,5 @@
 <?php
+
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
@@ -6,6 +7,7 @@ use App\Http\Controllers\MobilController;
 use App\Http\Controllers\BidangController;
 use App\Http\Controllers\PeminjamanController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\GantiOliController;
 
 // Home Route (untuk visitor, menampilkan peminjaman hari ini, semua, dan riwayat)
 Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -24,4 +26,5 @@ Route::middleware('auth')->group(function () {
     Route::resource('mobil', MobilController::class);
     Route::resource('bidang', BidangController::class);
     Route::resource('peminjaman', PeminjamanController::class);
+    Route::resource('ganti-oli', GantiOliController::class);
 });
