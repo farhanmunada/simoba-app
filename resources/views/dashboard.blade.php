@@ -54,7 +54,7 @@
                 </div>
                 <div class="card-body">
                     <p class="mb-3">
-                        <strong>SIMOBA (Sistem Informasi Mobil Bappeda)</strong> adalah sistem yang dirancang untuk
+                        <strong>SIMOBA (Sistem Informasi Mobil Bapperida)</strong> adalah sistem yang dirancang untuk
                         mengelola peminjaman kendaraan dinas di lingkungan Badan Perencanaan Pembangunan Daerah.
                     </p>
 
