@@ -38,18 +38,31 @@
                     <form action="{{ route('peminjaman.store') }}" method="POST">
                         @csrf
 
-                        {{-- Waktu --}}
-                        <div class="mb-3">
-                            <label for="waktu_peminjaman" class="form-label">
-                                <i class="bi bi-calendar-event me-1"></i>
-                                Tanggal Peminjaman <span class="text-danger">*</span>
-                            </label>
-                            <input type="date" class="form-control @error('waktu_peminjaman') is-invalid @enderror"
-                                id="waktu_peminjaman" name="waktu_peminjaman" value="{{ $tanggal }}"
-                                onchange="window.location.href='{{ route('peminjaman.create') }}?waktu_peminjaman=' + this.value">
-                            @error('waktu_peminjaman')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
+                        {{-- Waktu Mulai & Selesai --}}
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="waktu_mulai" class="form-label">
+                                    <i class="bi bi-calendar-plus me-1"></i>
+                                    Waktu Mulai <span class="text-danger">*</span>
+                                </label>
+                                <input type="datetime-local" class="form-control @error('waktu_mulai') is-invalid @enderror"
+                                    id="waktu_mulai" name="waktu_mulai" value="{{ old('waktu_mulai') }}" required>
+                                @error('waktu_mulai')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="waktu_selesai" class="form-label">
+                                    <i class="bi bi-calendar-check me-1"></i>
+                                    Waktu Selesai <span class="text-danger">*</span>
+                                </label>
+                                <input type="datetime-local"
+                                    class="form-control @error('waktu_selesai') is-invalid @enderror" id="waktu_selesai"
+                                    name="waktu_selesai" value="{{ old('waktu_selesai') }}" required>
+                                @error('waktu_selesai')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
                         </div>
 
                         <div class="row">
@@ -88,14 +101,9 @@
                                         name="mobil_id" required>
                                         <option value="">Pilih Mobil</option>
                                         @foreach ($mobil as $item)
-                                            @php
-                                                $isDisabled = in_array($item->id, $mobilDipinjamHariIni);
-                                            @endphp
-                                            <option value="{{ $item->id }}"
-                                                {{ old('mobil_id') == $item->id ? 'selected' : '' }}
-                                                {{ $isDisabled ? 'disabled' : '' }}>
+                                            <option value="{{ $item->id }}" {{-- Pilih otomatis berdasarkan old input atau dari parameter URL --}}
+                                                {{ old('mobil_id', $selectedMobilId ?? '') == $item->id ? 'selected' : '' }}>
                                                 {{ $item->nama_mobil }} ({{ $item->nomor_polisi }})
-                                                {{ $isDisabled ? '- Sudah dibooking pada tanggal ini' : '' }}
                                             </option>
                                         @endforeach
                                     </select>
@@ -180,8 +188,8 @@
                         <strong>Mobil:</strong><br>
                         Pilih mobil yang akan dipinjam.<br><br>
 
-                        <strong>Waktu Peminjaman:</strong><br>
-                        Tentukan tanggal dan jam peminjaman.<br><br>
+                        <strong>Waktu Mulai & Selesai:</strong><br>
+                        Tentukan tanggal dan jam mulai hingga selesai peminjaman.<br><br>
 
                         <strong>Tempat Kegiatan:</strong><br>
                         Lokasi tujuan atau tempat kegiatan.<br><br>
@@ -245,18 +253,26 @@
             const submitBtn = document.getElementById('submitBtn');
 
             form.addEventListener('submit', function(e) {
-                e.preventDefault(); // Cegah submit langsung
+                e.preventDefault(); // Mencegah form dari submit langsung
 
-                // Tampilkan konfirmasi
-                if (confirm("Apakah Anda yakin ingin menyimpan data peminjaman ini?")) {
-                    // Ubah tombol jadi loading
-                    submitBtn.disabled = true;
-                    submitBtn.innerHTML = `
-                        <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                        Menyimpan...`;
-
-                    form.submit(); // Submit form setelah konfirmasi
-                }
+                Swal.fire({
+                    title: 'Konfirmasi Simpan',
+                    text: "Apakah Anda yakin ingin menyimpan data peminjaman ini?",
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#6c757d',
+                    confirmButtonText: 'Ya, simpan!',
+                    cancelButtonText: 'Batal'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        submitBtn.disabled = true;
+                        submitBtn.innerHTML = `
+                            <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                            Menyimpan...`;
+                        form.submit(); // Submit form jika dikonfirmasi
+                    }
+                });
             });
         });
     </script>

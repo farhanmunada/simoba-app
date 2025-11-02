@@ -14,7 +14,9 @@ class Mobil extends Model
     protected $fillable = [
         'nama_mobil',
         'nomor_polisi',
-        'keterangan'
+        'gambar',
+        'keterangan',
+
     ];
 
     public function peminjaman()

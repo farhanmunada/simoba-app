@@ -12,47 +12,54 @@ class PeminjamanController extends Controller
 {
     public function index()
     {
-        $today = Carbon::today();
+        $now = Carbon::now();
 
-        $peminjaman = Peminjaman::with(['bidang', 'mobil'])
-            ->orderBy('waktu_peminjaman', 'desc')
-            ->get();
+        $semuaPeminjaman = Peminjaman::with(['bidang', 'mobil'])
+            ->orderBy('waktu_mulai', 'desc')
+            ->get()
+            ->map(function ($item) {
+                // pastikan waktu_mulai & waktu_selesai adalah Carbon instance
+                $item->waktu_mulai = Carbon::parse($item->waktu_mulai);
+                $item->waktu_selesai = Carbon::parse($item->waktu_selesai);
+                return $item;
+            });
 
-        $peminjamanHariIni = Peminjaman::with(['bidang', 'mobil'])
-            ->whereDate('waktu_peminjaman', $today)
-            ->orderBy('waktu_peminjaman', 'asc')
-            ->get();
+        $peminjamanBerlangsung = $semuaPeminjaman->filter(function ($item) use ($now) {
+            return $now->between($item->waktu_mulai, $item->waktu_selesai);
+        })->sortBy('waktu_selesai');
 
-        $peminjamanMendatang = Peminjaman::with(['bidang', 'mobil'])
-            ->whereDate('waktu_peminjaman', '>', $today)
-            ->orderBy('waktu_peminjaman', 'asc')
-            ->get();
+        $peminjamanMendatang = $semuaPeminjaman
+            ->filter(function ($item) use ($now) {
+                return $item->waktu_mulai->gt($now);
+            })
+            ->sortBy('waktu_mulai');
 
-        $riwayatPeminjaman = Peminjaman::with(['bidang', 'mobil'])
-            ->whereDate('waktu_peminjaman', '<', $today)
-            ->orderBy('waktu_peminjaman', 'desc')
-            ->get();
+        $riwayatPeminjaman = $semuaPeminjaman
+            ->filter(function ($item) use ($now) {
+                return $item->waktu_selesai->lt($now);
+            })
+            ->sortByDesc('waktu_mulai');
 
         return view('peminjaman.index', compact(
-            'peminjaman',
-            'peminjamanHariIni',
+            'peminjamanBerlangsung',
             'peminjamanMendatang',
             'riwayatPeminjaman'
         ));
     }
 
+
     public function create(Request $request)
     {
-        $tanggal = $request->input('waktu_peminjaman', Carbon::today()->toDateString());
-
-        $mobilDipinjamHariIni = Peminjaman::whereDate('waktu_peminjaman', $tanggal)
-            ->pluck('mobil_id')
-            ->toArray();
-
         $mobil = Mobil::all();
         $bidang = Bidang::all();
 
-        return view('peminjaman.create', compact('mobil', 'bidang', 'mobilDipinjamHariIni', 'tanggal'));
+        // Ambil mobil_id dari request URL jika ada
+        $selectedMobilId = $request->query('mobil_id');
+
+        // Kita tidak lagi melakukan pra-filter mobil di sini karena ketersediaan
+        // bergantung pada rentang waktu yang dinamis.
+        // Validasi akan dilakukan sepenuhnya di backend saat submit.
+        return view('peminjaman.create', compact('mobil', 'bidang', 'selectedMobilId'));
     }
 
     public function store(Request $request)
@@ -60,21 +67,36 @@ class PeminjamanController extends Controller
         $request->validate([
             'bidang_id' => 'required|exists:bidang,id',
             'mobil_id' => 'required|exists:mobil,id',
-            'waktu_peminjaman' => 'required|date',
+            'waktu_mulai' => 'required|date|after_or_equal:now',
+            'waktu_selesai' => 'required|date|after:waktu_mulai',
             'tempat_kegiatan' => 'required|string|max:255',
             'nama_acara' => 'required|string|max:255',
             'penanggung_jawab' => 'required|string|max:255',
         ]);
 
-        // Cek apakah peminjaman dengan mobil dan tanggal ini sudah ada
+        // Logika baru: Cek jadwal yang tumpang tindih (overlap)
         $duplikat = Peminjaman::where('mobil_id', $request->mobil_id)
-            ->whereDate('waktu_peminjaman', $request->waktu_peminjaman)
+            ->where(function ($query) use ($request) {
+                $query->where(function ($q) use ($request) {
+                    // Peminjaman baru dimulai di tengah peminjaman lain
+                    $q->where('waktu_mulai', '<', $request->waktu_mulai)
+                        ->where('waktu_selesai', '>', $request->waktu_mulai);
+                })->orWhere(function ($q) use ($request) {
+                    // Peminjaman baru berakhir di tengah peminjaman lain
+                    $q->where('waktu_mulai', '<', $request->waktu_selesai)
+                        ->where('waktu_selesai', '>', $request->waktu_selesai);
+                })->orWhere(function ($q) use ($request) {
+                    // Peminjaman baru "menelan" peminjaman lain
+                    $q->where('waktu_mulai', '>=', $request->waktu_mulai)
+                        ->where('waktu_selesai', '<=', $request->waktu_selesai);
+                });
+            })
             ->exists();
 
         if ($duplikat) {
             return redirect()->back()
                 ->withInput()
-                ->withErrors(['mobil_id' => 'Mobil ini sudah dipinjam pada tanggal tersebut.']);
+                ->withErrors(['waktu_mulai' => 'Jadwal mobil pada rentang waktu tersebut sudah terisi. Silakan pilih waktu lain.']);
         }
 
         // Simpan jika tidak duplikat
@@ -100,11 +122,35 @@ class PeminjamanController extends Controller
         $request->validate([
             'bidang_id' => 'required|exists:bidang,id',
             'mobil_id' => 'required|exists:mobil,id',
-            'waktu_peminjaman' => 'required|date',
+            'waktu_mulai' => 'required|date',
+            'waktu_selesai' => 'required|date|after:waktu_mulai',
             'tempat_kegiatan' => 'required|string|max:255',
             'nama_acara' => 'required|string|max:255',
             'penanggung_jawab' => 'required|string|max:255',
         ]);
+
+        // Logika baru: Cek jadwal yang tumpang tindih, kecuali untuk data itu sendiri
+        $duplikat = Peminjaman::where('mobil_id', $request->mobil_id)
+            ->where('id', '!=', $peminjaman->id) // Pengecualian untuk data yang sedang diedit
+            ->where(function ($query) use ($request) {
+                $query->where(function ($q) use ($request) {
+                    $q->where('waktu_mulai', '<', $request->waktu_mulai)
+                        ->where('waktu_selesai', '>', $request->waktu_mulai);
+                })->orWhere(function ($q) use ($request) {
+                    $q->where('waktu_mulai', '<', $request->waktu_selesai)
+                        ->where('waktu_selesai', '>', $request->waktu_selesai);
+                })->orWhere(function ($q) use ($request) {
+                    $q->where('waktu_mulai', '>=', $request->waktu_mulai)
+                        ->where('waktu_selesai', '<=', $request->waktu_selesai);
+                });
+            })
+            ->exists();
+
+        if ($duplikat) {
+            return redirect()->back()
+                ->withInput()
+                ->withErrors(['waktu_mulai' => 'Jadwal mobil pada rentang waktu tersebut sudah terisi oleh peminjam lain.']);
+        }
 
         $peminjaman->update($request->all());
 

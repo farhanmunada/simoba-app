@@ -32,7 +32,7 @@
     <!-- Peminjaman Hari Ini -->
     <div class="card mb-4">
         <div class="card-header bg-primary text-white">
-            Peminjaman Hari Ini
+            Peminjaman Sedang Berlangsung
         </div>
         <div class="card-body table-responsive">
             <table class="table table-striped table-hover">
@@ -49,7 +49,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @forelse($peminjamanHariIni as $index => $item)
+                    @forelse($peminjamanBerlangsung as $index => $item)
                         <tr>
                             <td>{{ $index + 1 }}</td>
                             <td><span class="badge bg-secondary">{{ $item->bidang->nama_bidang }}</span></td>
@@ -58,7 +58,9 @@
                                 <small class="text-muted">{{ $item->mobil->nomor_polisi }}</small>
                             </td>
                             <td>
-                                <strong>{{ \Carbon\Carbon::parse($item->waktu_peminjaman)->format('d/m/Y') }}</strong><br>
+                                <strong>{{ $item->waktu_mulai->format('d/m/Y') }}</strong><br>
+                                <small>{{ $item->waktu_mulai->format('H:i') }} -
+                                    {{ $item->waktu_selesai->format('H:i') }}</small>
                             </td>
                             <td>{{ $item->tempat_kegiatan }}</td>
                             <td>{{ $item->nama_acara }}</td>
@@ -82,7 +84,8 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="8" class="text-center">Tidak ada peminjaman hari ini.</td>
+                            <td colspan="8" class="text-center">Tidak ada peminjaman yang sedang berlangsung saat ini.
+                            </td>
                         </tr>
                     @endforelse
                 </tbody>
@@ -126,7 +129,9 @@
                                         <small class="text-muted">{{ $item->mobil->nomor_polisi }}</small>
                                     </td>
                                     <td>
-                                        <strong>{{ $item->waktu_peminjaman->format('d/m/Y') }}</strong><br>
+                                        <strong>{{ $item->waktu_mulai->format('d/m/Y') }}</strong><br>
+                                        <small>{{ $item->waktu_mulai->format('H:i') }} -
+                                            {{ $item->waktu_selesai->format('H:i') }}</small>
                                     </td>
                                     <td>{{ $item->tempat_kegiatan }}</td>
                                     <td>{{ $item->nama_acara }}</td>
@@ -196,7 +201,9 @@
                                         <small class="text-muted">{{ $item->mobil->nomor_polisi }}</small>
                                     </td>
                                     <td>
-                                        <strong>{{ $item->waktu_peminjaman->format('d/m/Y') }}</strong><br>
+                                        <strong>{{ $item->waktu_mulai->format('d/m/Y') }}</strong><br>
+                                        <small>{{ $item->waktu_mulai->format('H:i') }} -
+                                            {{ $item->waktu_selesai->format('H:i') }}</small>
                                     </td>
                                     <td>{{ $item->tempat_kegiatan }}</td>
                                     <td>{{ $item->nama_acara }}</td>

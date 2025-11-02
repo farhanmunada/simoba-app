@@ -14,7 +14,8 @@ class PeminjamanSeeder extends Seeder
             [
                 'bidang_id' => 1,
                 'mobil_id' => 1,
-                'waktu_peminjaman' => Carbon::now(),
+                'waktu_mulai' => Carbon::now()->setHour(8)->setMinute(0)->setSecond(0),
+                'waktu_selesai' => Carbon::now()->setHour(12)->setMinute(0)->setSecond(0),
                 'tempat_kegiatan' => 'Kecamatan Tembarak',
                 'nama_acara' => 'Rapat Koordinasi',
                 'penanggung_jawab' => 'Budi Santoso',
@@ -24,7 +25,8 @@ class PeminjamanSeeder extends Seeder
             [
                 'bidang_id' => 2,
                 'mobil_id' => 2,
-                'waktu_peminjaman' => Carbon::tomorrow(),
+                'waktu_mulai' => Carbon::tomorrow()->setHour(9)->setMinute(0)->setSecond(0),
+                'waktu_selesai' => Carbon::tomorrow()->setHour(11)->setMinute(0)->setSecond(0),
                 'tempat_kegiatan' => 'Kecamatan Kandangan',
                 'nama_acara' => 'Monitoring Proyek',
                 'penanggung_jawab' => 'Siti Rahmawati',

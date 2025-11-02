@@ -14,14 +14,16 @@ class Peminjaman extends Model
     protected $fillable = [
         'bidang_id',
         'mobil_id',
-        'waktu_peminjaman',
+        'waktu_mulai',
+        'waktu_selesai',
         'tempat_kegiatan',
         'nama_acara',
         'penanggung_jawab'
     ];
 
     protected $casts = [
-        'waktu_peminjaman' => 'datetime',
+        'waktu_mulai' => 'datetime',
+        'waktu_selesai' => 'datetime',
     ];
 
     public function bidang()
